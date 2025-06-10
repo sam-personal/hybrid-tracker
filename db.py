@@ -125,4 +125,23 @@ def update_current_day_office_exit_time(conn):
         conn.commit()
     except sqlite3.Error as e:
         print(e)
-        
+
+# If no days for the current month exist in the database, fill all days ready for tracking
+def populate_month_days(conn):
+    import calendar
+    from datetime import datetime, timedelta
+
+    current_year = datetime.now().year
+    current_month = datetime.now().month
+
+    # Get the number of days in the current month
+    num_days = calendar.monthrange(current_year, current_month)[1]
+
+    for day in range(1, num_days + 1):
+        date_str = f"{current_year}-{current_month:02d}-{day:02d}"
+        cursor = conn.cursor()
+        cursor.execute('''
+            INSERT OR IGNORE INTO tracked_days (tracked_date, is_holiday, office_location, office_entry_time, office_exit_time, office_minutes, other_minutes)
+            VALUES (?, 0, NULL, NULL, NULL, 0, 0)
+        ''', (date_str,))
+        conn.commit()

@@ -1,7 +1,7 @@
 import sqlite3
 import time
 from utils import is_in_office, get_office_location
-from db import create_tables, is_current_day_tracked, insert_default_tracked_day, increment_office_minutes, increment_other_minutes, is_current_day_office_set, is_office_entry_time_set, set_current_day_office, update_current_day_office_entry_time, update_current_day_office_exit_time
+from db import populate_month_days, create_tables, is_current_day_tracked, insert_default_tracked_day, increment_office_minutes, increment_other_minutes, is_current_day_office_set, is_office_entry_time_set, set_current_day_office, update_current_day_office_entry_time, update_current_day_office_exit_time
 
 def main():
     # Initialize database connection
@@ -9,6 +9,9 @@ def main():
     
     # Create tables if they do not exist
     create_tables(conn)
+
+    # Populate the month days if they are not already tracked in the database
+    populate_month_days(conn)
 
     # Check if the current day is already tracked
     if not is_current_day_tracked(conn):
@@ -42,6 +45,7 @@ def main():
 
 if __name__ == "__main__":
     # Run the main function ever minute    
-    while True:
-        main()
-        time.sleep(60)  # Sleep for 60 seconds before the next run
+    # while True:
+    #     main()
+    #     time.sleep(60)  # Sleep for 60 seconds before the next run
+    main()
